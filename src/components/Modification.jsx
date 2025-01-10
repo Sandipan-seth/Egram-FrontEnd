@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import userContext from "../contexts/UserContext";
+
 
 const Modification = ({ id }) => {
-  const [name, setName] = useState("");
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
-  const [address3, setAddress3] = useState("");
-  const [phone, setPhone] = useState("");
+  const {userData} = useContext(userContext);
+  const [name, setName] = useState(userData.name);
+  const [phone, setPhone] = useState(userData.phone);
+  const [address1, setAddress1] = useState(userData.address.line1);
+  const [address2, setAddress2] = useState(userData.address.line2);
+  const [pinCode, setPinCode] = useState(userData.address.pincode);
 
   useEffect(() => {
     scrollTo(0, 0);
@@ -122,19 +125,19 @@ const Modification = ({ id }) => {
           />
 
           <label
-            htmlFor="address3"
+            htmlFor="PinCode"
             className="block text-gray-700 font-medium mb-1"
           >
-            Address Line 3
+             Pin Code
           </label>
           <input
             type="text"
-            id="address3"
-            value={address3}
-            placeholder="Enter Address Line 3"
+            id="PinCode"
+            value={pinCode}
+            placeholder="Enter Pin Code"
             className="border border-gray-300 p-2 rounded-md w-full focus:ring-2 focus:ring-blue-200 outline-none"
             autoComplete="off"
-            onChange={(e) => setAddress3(e.target.value)}
+            onChange={(e) => setPinCode(e.target.value)}
           />
         </div>
 
