@@ -15,7 +15,7 @@ const NewApply = ({ id }) => {
   }, []);
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md border border-gray-400">
       <h2 className="text-2xl font-semibold mb-4 text-center">
         Add Details for{" "}
         {id

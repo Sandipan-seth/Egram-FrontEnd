@@ -1,11 +1,15 @@
 import React, { useContext, useState } from "react";
 import userContext from "../contexts/UserContext";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const { userType, setUserType, setToken, backendUrl } =
+    useContext(userContext);
+
+  const navigate = useNavigate();
+
   const [state, setState] = useState("Sign Up");
-  const { userType,setUserType} =useContext(userContext)
-
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -15,6 +19,37 @@ const Login = () => {
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+
+    if (state === "Log In") {
+      try {
+        let specialCode = "";
+        if (userType === "officer") {
+          specialCode = officerCode;
+        } else if (userType === "admin") {
+          specialCode = adminCode;
+        }
+        const data = await axios.post(`http://localhost:7000/api/auth/login`, {
+          email,
+          password,
+          code: specialCode,
+          role: userType,
+        });
+        const { token, message } = data.data;
+        setToken(token); // Set token securely
+        localStorage.setItem("token", token);
+        setName("");
+        setEmail("");
+        setPassword("");
+        setNumber("");
+        setOfficerCode("");
+        setAdminCode("");
+        navigate("/");
+        alert(message);
+      } catch (err) {
+        console.error("Login error:", err);
+        alert(err.response?.data?.message || "Invalid Credentials");
+      }
+    }
   };
 
   return (
@@ -23,9 +58,13 @@ const Login = () => {
         {/* User Option */}
         <div
           onClick={() => {
-            setUserType("User");
+            setUserType("user");
           }}
-          className={`w-full max-w-sm p-4 text-center ${userType==='User'?'bg-blue-500 text-white':'hover:bg-blue-500 hover:text-white'} rounded-md shadow-md cursor-pointer border border-blue-500 transition-all duration-300 md:max-w-md`}
+          className={`w-full max-w-sm p-4 text-center ${
+            userType === "user"
+              ? "bg-blue-500 text-white"
+              : "hover:bg-blue-300 hover:text-black"
+          } rounded-md shadow-md cursor-pointer border border-blue-500 transition-all duration-300 md:max-w-md`}
         >
           Are you a User?
         </div>
@@ -33,9 +72,13 @@ const Login = () => {
         {/* Admin Option */}
         <div
           onClick={() => {
-            setUserType("Admin");
+            setUserType("admin");
           }}
-          className={`w-full max-w-sm p-4 text-center ${userType==='Admin'?'bg-green-500 text-white':'hover:bg-green-500 hover:text-white'} rounded-md shadow-md cursor-pointer border border-green-600 transition-all duration-300 md:max-w-md`}
+          className={`w-full max-w-sm p-4 text-center ${
+            userType === "admin"
+              ? "bg-green-500 text-white"
+              : "hover:bg-green-300 hover:text-black"
+          } rounded-md shadow-md cursor-pointer border border-green-600 transition-all duration-300 md:max-w-md`}
         >
           Are you an Admin?
         </div>
@@ -43,9 +86,13 @@ const Login = () => {
         {/* Officer Option */}
         <div
           onClick={() => {
-            setUserType("Officer");
+            setUserType("officer");
           }}
-          className={`w-full max-w-sm p-4 text-center ${userType==='Officer'?'bg-purple-500 text-white':'hover:bg-purple-500 hover:text-white'} rounded-md shadow-md cursor-pointer border border-purple-500 transition-all duration-300 md:max-w-md`}
+          className={`w-full max-w-sm p-4 text-center ${
+            userType === "officer"
+              ? "bg-purple-500 text-white"
+              : "hover:bg-purple-300 hover:text-black"
+          } rounded-md shadow-md cursor-pointer border border-purple-500 transition-all duration-300 md:max-w-md`}
         >
           Are you an Officer?
         </div>
@@ -98,7 +145,7 @@ const Login = () => {
             />
           </div>
 
-          {userType === "Officer" ? (
+          {userType === "officer" ? (
             <div className="w-full mt-5">
               <p>Officer Special Code</p>
               <input
@@ -111,7 +158,7 @@ const Login = () => {
             </div>
           ) : null}
 
-          {userType === "Admin" ? (
+          {userType === "admin" ? (
             <div className="w-full mt-5">
               <p>Admin Special Code</p>
               <input

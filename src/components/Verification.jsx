@@ -37,7 +37,7 @@ function Verification() {
                 onClick={() => setOption("Change")}
                 className={`py-2 px-4 rounded-md  ${
                   option === "Change"
-                    ? "bg-green-400 text-white"
+                    ? "bg-green-500 text-white"
                     : "border border-green-400 hover:bg-green-200"
                 }`}
               >
@@ -47,7 +47,7 @@ function Verification() {
                 onClick={() => setOption("New")}
                 className={`py-2 px-4 rounded-md  ${
                   option === "New"
-                    ? "bg-red-400 text-white"
+                    ? "bg-red-500 text-white"
                     : "border border-red-400 hover:bg-red-200"
                 }`}
               >

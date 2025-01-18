@@ -5,9 +5,8 @@ import userContext from "../contexts/UserContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { token, setToken } = useContext(userContext);
+  const { token, setToken, userType,setUserType } = useContext(userContext);
   const [showMenu, setShowMenu] = useState(false);
-  // const [token,setToken] = useState(true);
 
   return (
     <div className="sticky z-10 top-0 left-0 flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400 bg-white bg-opacity-75">
@@ -51,10 +50,25 @@ const Navbar = () => {
           />
         </NavLink>
       </ul>
+
+      <div className={`${token==="" ? "w-0 h-0" : "hidden md:block"}`}>
+        {userType === "user" ? null : userType === "admin" ? (
+          <button className="px-4 py-2 border border-gray-600 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300">
+            {userType.charAt(0).toUpperCase() + userType.slice(1)} Panel
+          </button>
+        ) : userType === "officer" ? (
+          <button className="px-4 py-2 border border-gray-600 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300">
+            {userType.charAt(0).toUpperCase() + userType.slice(1)} Panel
+          </button>
+        ) : null}
+      </div>
+
       <div className="flex items-center gap-4">
         {token ? (
           <div className="flex items-center gap-2 cursor-pointer group relative">
             <img className="w-8 rounded-full" src={assets.profile_pic} alt="" />
+
+            {/* floating menu */}
             <div className="absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 z-20 hidden group-hover:block">
               <div className="min-w-48 bg-stone-100 flex flex-col gap-4 p-4">
                 <p
@@ -75,7 +89,9 @@ const Navbar = () => {
                 </p>
                 <p
                   onClick={() => {
-                    setToken(false);
+                    setToken("");
+                    localStorage.removeItem("token");
+                    setUserType("user");
                   }}
                   className="hover:text-black cursor-pointer"
                 >
@@ -102,12 +118,14 @@ const Navbar = () => {
             setShowMenu(!showMenu);
           }}
         />
+
+        {/* responsive menu */}
         <div
-          className={`md:hidden right-0 top-0 bottom-0 z-20 overflow-hidden bg-white transition-all ${
+          className={`md:hidden right-0 top-0 bottom-0 z-20 overflow-hidden bg-white transition-all flex flex-col justify-evenly ${
             showMenu ? "fixed w-80" : "h-0 w-0"
           }`}
         >
-          <div className="flex items-center justify-between px-5 py-6">
+          <div className="flex items-center justify-between px-5">
             {/* <img className="w-36" src="" alt="logo" /> */}
 
             <div className="text-2xl font-bold">Egram.</div>
@@ -155,6 +173,18 @@ const Navbar = () => {
               <p className="px-4 py-2 rounded inline-block">Contact</p>
             </NavLink>
           </ul>
+
+          <div className="w-full flex justify-center items-center">
+            {userType === "user" ? null : userType === "admin" ? (
+              <button className="p-4 border border-gray-600 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300">
+                {userType.charAt(0).toUpperCase() + userType.slice(1)} Panel
+              </button>
+            ) : userType === "officer" ? (
+              <button className="p-4 border border-gray-600 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300">
+                {userType.charAt(0).toUpperCase() + userType.slice(1)} Panel
+              </button>
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

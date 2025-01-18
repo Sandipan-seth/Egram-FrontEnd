@@ -8,7 +8,7 @@ const MyProfile = () => {
 
   return (
     <div className="p-6 min-h-screen flex justify-center items-center">
-      <div className="bg-white rounded-lg shadow-xl p-10 w-full max-w-md">
+      <div className="bg-white rounded-lg shadow-xl p-10 w-full max-w-md border border-gray-400">
         {/* Profile Image */}
         <div className="flex flex-col items-center mb-6">
           <img

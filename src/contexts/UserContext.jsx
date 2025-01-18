@@ -1,12 +1,39 @@
 import { createContext, useState } from "react";
 import { assets } from "../assets/assets_frontend/assets";
+import axios from "axios";
 
 const userContext = createContext();
 
-export const UserProvider = (props) => {
-  const [token, setToken] = useState(true);
 
-  const [userType, setUserType] = useState("User");
+
+
+
+export const UserProvider = (props) => {
+
+
+  const userVerify = async (token) => {
+    try {
+      if (localStorage.getItem("token") === null) {
+        localStorage.setItem("token", "");
+      } else {
+        let res = await axios.post(`http://localhost:7000/api/auth/decode`, {
+          token,
+        });
+        setUserType(res.data.user.role);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const [userType, setUserType] = useState("user");
+  userVerify(localStorage.getItem("token"));
+
+
+  let temp = localStorage.getItem("token");
+  const [token, setToken] = useState(temp);
+
+  const backendUrl = import.meta.env.BACKEND_URL;
   const [userData, setUserData] = useState({
     name: "Sandipan Seth",
     image: assets.profile_pic,
@@ -28,6 +55,7 @@ export const UserProvider = (props) => {
     setToken,
     userType,
     setUserType,
+    backendUrl
   };
   return (
     <userContext.Provider value={values}>{props.children}</userContext.Provider>
