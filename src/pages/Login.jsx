@@ -1,13 +1,16 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import userContext from "../contexts/UserContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const { userType, setUserType, setToken, backendUrl } =
+  const { token,userType, setUserType, setToken, backendUrl,username,setUsername } =
     useContext(userContext);
 
   const navigate = useNavigate();
+
+  
+  
 
   const [state, setState] = useState("Sign Up");
   const [email, setEmail] = useState("");
@@ -16,6 +19,18 @@ const Login = () => {
   const [officerCode, setOfficerCode] = useState("");
   const [adminCode, setAdminCode] = useState("");
   const [number, setNumber] = useState("");
+  
+
+
+
+  useEffect(() => {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setNumber("");
+    setOfficerCode("");
+    setAdminCode("");
+  }, [state, userType]);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -34,9 +49,10 @@ const Login = () => {
           code: specialCode,
           role: userType,
         });
-        const { token, message } = data.data;
+        const { token, message, existingUser } = data.data;
         setToken(token); // Set token securely
         localStorage.setItem("token", token);
+        setUsername(existingUser.fullname);
         setName("");
         setEmail("");
         setPassword("");
@@ -50,7 +66,58 @@ const Login = () => {
         alert(err.response?.data?.message || "Invalid Credentials");
       }
     }
+
+    if (state === "Sign Up") {
+      try {
+        let specialCode = "000000";
+        if (userType === "admin") {
+          specialCode = adminCode;
+        } else if (userType === "officer") {
+          specialCode = officerCode;
+        }
+
+        const payload = {
+          fullname: name,
+          email,
+          password,
+          role: userType,
+          phone: number,
+          code: specialCode,
+        };
+
+        // console.log("Payload being sent:", payload);
+
+        const response = await axios.post(
+          `http://localhost:7000/api/auth/register`,
+          payload
+        );
+
+        
+        setToken(response.data.token); // Set token securely
+        localStorage.setItem("token",response.data.token);
+        setUsername(response.data.user.fullname);
+
+
+        
+        setName("");
+        setEmail("");
+        setPassword("");
+        setNumber("");
+        setOfficerCode("");
+        setAdminCode("");
+        navigate("/");
+        alert(response.data.message);
+      
+      } catch (err) {
+        // alert(err.response?.data?.message);
+        console.error("Signup error:", err);
+      }
+    } 
+
+
   };
+
+  
 
   return (
     <div className="min-h-[80vh] flex items-start pt-4 flex-col md:flex-row justify-around gap-10">

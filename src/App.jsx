@@ -1,15 +1,16 @@
-import React from 'react'
-import { Route, Router, Routes } from 'react-router-dom'
-import Home from './pages/Home'
-import About from './pages/About'
-import Contact from './pages/Contact'
-import Login from './pages/Login'
-import Navbar from './components/Navbar'
-import Footer from './components/Footer'
-import MyProfile from './pages/MyProfile'
-import MyWorks from './pages/MyWorks'
-import AllServices from './pages/AllServices'
-import Verification from './components/Verification'
+import React from "react";
+import { Route, Router, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Login from "./pages/Login";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import MyProfile from "./pages/MyProfile";
+import MyWorks from "./pages/MyWorks";
+import AllServices from "./pages/AllServices";
+import Verification from "./components/Verification";
+import ProtectedRoutes from "./utils/ProtectedRoutes";
 
 const App = () => {
   return (
@@ -19,16 +20,18 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/login" element={<Login />} />
         <Route path="/all-works" element={<AllServices />} />
         <Route path="/my-profile" element={<MyProfile />} />
         <Route path="/my-works" element={<MyWorks />} />
-        <Route path='/all-works/:id' element={<Verification />} />
+        <Route path="/all-works/:id" element={<Verification />} />
+        <Route path="/login" element={<Login />} />
+        {/* <Route element={<ProtectedRoutes />}>
+        </Route> */}
       </Routes>
 
       <Footer />
     </div>
   );
-}
+};
 
-export default App
+export default App;

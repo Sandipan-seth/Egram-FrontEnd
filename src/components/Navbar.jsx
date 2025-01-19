@@ -2,11 +2,38 @@ import React, { useState, useEffect, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets_frontend/assets";
 import userContext from "../contexts/UserContext";
+import axios from "axios";
+
+
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { token, setToken, userType,setUserType } = useContext(userContext);
+  const { token, setToken, userType, setUserType,username,setUsername } = useContext(userContext);
   const [showMenu, setShowMenu] = useState(false);
+
+  const userVerify = async (token) => {
+    try {
+      if (localStorage.getItem("token") === null) {
+        return;
+      } else {
+        let res = await axios.post(`http://localhost:7000/api/auth/decode`, {
+          token,
+        });
+        // console.log(res.data);
+        setUserType(res.data.user.role);
+        setUsername(res.data.user.fullname);
+        // console.log(hello);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
+
+    useEffect(() => {
+      userVerify(localStorage.getItem("token"));
+    }, []);
 
   return (
     <div className="sticky z-10 top-0 left-0 flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400 bg-white bg-opacity-75">
@@ -19,6 +46,16 @@ const Navbar = () => {
       >
         Egram.
       </div>
+
+        {
+          token?
+          (
+          <div>
+            hello {username}
+          </div>
+          ):null
+        }
+
       <ul className="hidden md:flex items-start gap-5 font-medium">
         <NavLink to={"/"}>
           <li className="py-1">
@@ -51,17 +88,20 @@ const Navbar = () => {
         </NavLink>
       </ul>
 
-      <div className={`${token==="" ? "w-0 h-0" : "hidden md:block"}`}>
-        {userType === "user" ? null : userType === "admin" ? (
-          <button className="px-4 py-2 border border-gray-600 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300">
-            {userType.charAt(0).toUpperCase() + userType.slice(1)} Panel
-          </button>
-        ) : userType === "officer" ? (
-          <button className="px-4 py-2 border border-gray-600 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300">
-            {userType.charAt(0).toUpperCase() + userType.slice(1)} Panel
-          </button>
-        ) : null}
-      </div>
+
+      {userType === "user" || !token ? null : (
+        <div className="">
+          {userType === "admin" ? (
+            <button className="px-4 py-2 border border-gray-600 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300">
+              {userType.charAt(0).toUpperCase() + userType.slice(1)} Panel
+            </button>
+          ) : userType === "officer" ? (
+            <button className="px-4 py-2 border border-gray-600 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300">
+              {userType.charAt(0).toUpperCase() + userType.slice(1)} Panel
+            </button>
+          ) : null}
+        </div>
+      )}
 
       <div className="flex items-center gap-4">
         {token ? (

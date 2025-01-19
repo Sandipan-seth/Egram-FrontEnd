@@ -1,6 +1,5 @@
 import { createContext, useState } from "react";
 import { assets } from "../assets/assets_frontend/assets";
-import axios from "axios";
 
 const userContext = createContext();
 
@@ -10,24 +9,8 @@ const userContext = createContext();
 
 export const UserProvider = (props) => {
 
-
-  const userVerify = async (token) => {
-    try {
-      if (localStorage.getItem("token") === null) {
-        localStorage.setItem("token", "");
-      } else {
-        let res = await axios.post(`http://localhost:7000/api/auth/decode`, {
-          token,
-        });
-        setUserType(res.data.user.role);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const [userType, setUserType] = useState("user");
-  userVerify(localStorage.getItem("token"));
+  const [username, setUsername] = useState("");
 
 
   let temp = localStorage.getItem("token");
@@ -55,7 +38,9 @@ export const UserProvider = (props) => {
     setToken,
     userType,
     setUserType,
-    backendUrl
+    backendUrl,
+    username,
+    setUsername,
   };
   return (
     <userContext.Provider value={values}>{props.children}</userContext.Provider>
