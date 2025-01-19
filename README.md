@@ -4,7 +4,7 @@ It is a full Stack Project based on various Services Like Aadhar Card, pan Card 
 
 Currently, two official plugins are available:
 
-#How to install
+## How to install
 ```
 code
 ```
