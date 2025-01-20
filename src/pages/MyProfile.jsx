@@ -1,8 +1,34 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import userContext from "../contexts/UserContext";
+import { assets } from "../assets/assets_frontend/assets";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const MyProfile = () => {
-  const { userData, setUserData } = useContext(userContext);
+  const { userData, setUserData, token } = useContext(userContext);
+  const navigate = useNavigate();
+
+  const userVerify = async (token) => {
+    try {
+      if (localStorage.getItem("token") === null) {
+        return;
+      } else {
+        let res = await axios.post(`http://localhost:7000/api/user/getUsers`, {
+          token,
+        });
+        setUserData(res.data.user);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+    userVerify(localStorage.getItem("token"));
+  }, [token]);
 
   const [isEdit, setIsEdit] = useState(false);
 
@@ -12,14 +38,14 @@ const MyProfile = () => {
         {/* Profile Image */}
         <div className="flex flex-col items-center mb-6">
           <img
-            src={userData.image}
+            src={userData.image ? userData.image : assets.profile_pic}
             alt="Profile"
             className="w-24 h-24 rounded-full border-2 border-gray-300"
           />
           {isEdit ? (
             <input
               type="text"
-              value={userData.name}
+              value={userData.fullname}
               onChange={(e) =>
                 setUserData((prev) => ({ ...prev, name: e.target.value }))
               }
@@ -27,7 +53,13 @@ const MyProfile = () => {
               required
             />
           ) : (
-            <p className="mt-3 text-lg font-semibold">{userData.name}</p>
+            <p className="mt-3 text-lg font-semibold">
+              {userData.fullname
+                .toLowerCase()
+                .split(" ")
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ")}
+            </p>
           )}
         </div>
 
@@ -53,93 +85,6 @@ const MyProfile = () => {
               />
             ) : (
               <p className="text-gray-700">{userData.phone}</p>
-            )}
-          </div>
-
-          {/* Address */}
-          <div className="mb-4">
-            <p className="text-gray-500 text-sm">Address:</p>
-            {isEdit ? (
-              <div className="space-y-2">
-                <input
-                  type="text"
-                  value={userData.address.line1}
-                  onChange={(e) =>
-                    setUserData((prev) => ({
-                      ...prev,
-                      address: { ...prev.address, line1: e.target.value },
-                    }))
-                  }
-                  className="border border-gray-300 rounded p-1 w-full"
-                  required
-                />
-                <input
-                  type="text"
-                  value={userData.address.line2}
-                  onChange={(e) =>
-                    setUserData((prev) => ({
-                      ...prev,
-                      address: { ...prev.address, line2: e.target.value },
-                    }))
-                  }
-                  className="border border-gray-300 rounded p-1 w-full"
-                />
-                <input
-                  type="text"
-                  value={userData.address.pincode}
-                  onChange={(e) =>
-                    setUserData((prev) => ({
-                      ...prev,
-                      address: { ...prev.address, pincode: e.target.value },
-                    }))
-                  }
-                  className="border border-gray-300 rounded p-1 w-full"
-                  required
-                />
-              </div>
-            ) : (
-              <div className="text-gray-700">
-                <p>{userData.address.line1}</p>
-                <p>{userData.address.line2}</p>
-                <p>{userData.address.pincode}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Gender */}
-          <div className="mb-4">
-            <p className="text-gray-500 text-sm">Gender:</p>
-            {isEdit ? (
-              <select
-                value={userData.gender}
-                onChange={(e) =>
-                  setUserData((prev) => ({ ...prev, gender: e.target.value }))
-                }
-                className="border border-gray-300 rounded p-1 w-full"
-              >
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-            ) : (
-              <p className="text-gray-700">{userData.gender}</p>
-            )}
-          </div>
-
-          {/* Date of Birth */}
-          <div className="mb-4">
-            <p className="text-gray-500 text-sm">Date of Birth:</p>
-            {isEdit ? (
-              <input
-                type="date"
-                value={userData.dob}
-                onChange={(e) =>
-                  setUserData((prev) => ({ ...prev, dob: e.target.value }))
-                }
-                className="border border-gray-300 rounded p-1 w-full"
-                required
-              />
-            ) : (
-              <p className="text-gray-700">{userData.dob}</p>
             )}
           </div>
         </div>

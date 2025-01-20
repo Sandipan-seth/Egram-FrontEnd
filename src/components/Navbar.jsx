@@ -8,7 +8,15 @@ import axios from "axios";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { token, setToken, userType, setUserType,username,setUsername } = useContext(userContext);
+  const {
+    token,
+    setToken,
+    userType,
+    setUserType,
+    username,
+    setUsername,
+    setUserData,
+  } = useContext(userContext);
   const [showMenu, setShowMenu] = useState(false);
 
   const userVerify = async (token) => {
@@ -22,6 +30,7 @@ const Navbar = () => {
         // console.log(res.data);
         setUserType(res.data.user.role);
         setUsername(res.data.user.fullname);
+        // setUserData(res.data.user);
         // console.log(hello);
       }
     } catch (err) {
