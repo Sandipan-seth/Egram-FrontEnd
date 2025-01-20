@@ -47,14 +47,18 @@ const Navbar = () => {
         Egram.
       </div>
 
-        {
-          token?
-          (
-          <div>
-            hello {username}
-          </div>
-          ):null
-        }
+      {token ? (
+        <div className="">
+          Hello, &nbsp;
+          <span className="text-red-500 font-bold text-lg md:text-xl ">
+            {
+              (username.charAt(0).toUpperCase() + username.slice(1)).split(
+                " "
+              )[0]
+            }
+          </span>
+        </div>
+      ) : null}
 
       <ul className="hidden md:flex items-start gap-5 font-medium">
         <NavLink to={"/"}>
@@ -87,7 +91,6 @@ const Navbar = () => {
           />
         </NavLink>
       </ul>
-
 
       {userType === "user" || !token ? null : (
         <div className="">
