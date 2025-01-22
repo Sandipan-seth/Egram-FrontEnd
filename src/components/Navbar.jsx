@@ -27,7 +27,7 @@ const Navbar = () => {
         let res = await axios.post(`http://localhost:7000/api/auth/decode`, {
           token,
         });
-        // console.log(res.data);
+        console.log(res.data);
         setUserType(res.data.user.role);
         setUsername(res.data.user.fullname);
         // setUserData(res.data.user);

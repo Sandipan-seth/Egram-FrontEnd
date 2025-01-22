@@ -54,11 +54,13 @@ const MyProfile = () => {
             />
           ) : (
             <p className="mt-3 text-lg font-semibold">
-              {userData.fullname
-                .toLowerCase()
-                .split(" ")
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(" ")}
+              {!userData.fullname
+                ? "Full Name"
+                : userData.fullname
+                    .toLowerCase()
+                    .split(" ")
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(" ")}
             </p>
           )}
         </div>
@@ -70,7 +72,7 @@ const MyProfile = () => {
           <h2 className="text-lg font-medium mb-3">Contact Info</h2>
           <div className="mb-4">
             <p className="text-gray-500 text-sm">Email Id:</p>
-            <p className="text-gray-700">{userData.email}</p>
+            <p className="text-gray-700">{userData.email ? userData.email: "Email"}</p>
           </div>
           <div className="mb-4">
             <p className="text-gray-500 text-sm">Phone:</p>
@@ -84,7 +86,7 @@ const MyProfile = () => {
                 className="border border-gray-300 rounded p-1 w-full"
               />
             ) : (
-              <p className="text-gray-700">{userData.phone}</p>
+              <p className="text-gray-700">{userData.phone? userData.phone : "Phone Number"}</p>
             )}
           </div>
         </div>
