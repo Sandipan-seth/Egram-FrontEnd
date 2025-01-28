@@ -110,7 +110,7 @@ const Login = () => {
       
       } catch (err) {
         // alert(err.response?.data?.message);
-        console.error("Signup error:", err);
+        alert(err.response?.data?.message || "Invalid Credentials");
       }
     } 
 

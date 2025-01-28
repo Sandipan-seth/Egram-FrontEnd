@@ -5,100 +5,179 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const MyProfile = () => {
-  const { userData, setUserData, token } = useContext(userContext);
+  const { userData, setUserData } = useContext(userContext);
   const navigate = useNavigate();
+
+  const [editedName, setEditedName] = useState("");
+  const [editedNumber, setEditedNumber] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    userVerify(token);
+  }, []);
+
+  useEffect(() => {
+    if (userData) {
+      setEditedName(userData.fullname || "");
+      setEditedNumber(userData.phone || "");
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    userVerify(token);
+  }, []);
 
   const userVerify = async (token) => {
     try {
-      if (localStorage.getItem("token") === null) {
-        return;
-      } else {
-        let res = await axios.post(`http://localhost:7000/api/user/getUsers`, {
-          token,
-        });
-        setUserData(res.data.user);
-      }
+      let res = await axios.post(`http://localhost:7000/api/user/getUsers`, {
+        token,
+      });
+      setUserData(res.data.user);
     } catch (err) {
       console.error(err);
+      navigate("/login");
     }
   };
 
-  useEffect(() => {
-    if (!token) {
-      navigate("/login");
-    }
-    userVerify(localStorage.getItem("token"));
-  }, [token]);
+  const submitHandler = async (e) => {
+    e.preventDefault();
 
-  const [isEdit, setIsEdit] = useState(false);
+    if (!editedName || !editedNumber) {
+      alert("Please fill out all fields.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      let res = await axios.post(`http://localhost:7000/api/user/updateUser`, {
+        name: editedName,
+        phone: editedNumber,
+        token: localStorage.getItem("token"),
+      });
+
+      if (res.data.success) {
+        setShowForm(false);
+        setUserData(res.data.user);
+        alert("Profile updated successfully!");
+      } else {
+        alert("Failed to update user.");
+      }
+    } catch (err) {
+      console.error("Error updating user:", err);
+      alert("An error occurred. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="p-6 min-h-screen flex justify-center items-center">
-      <div className="bg-white rounded-lg shadow-xl p-10 w-full max-w-md border border-gray-400">
-        {/* Profile Image */}
-        <div className="flex flex-col items-center mb-6">
-          <img
-            src={userData.image ? userData.image : assets.profile_pic}
-            alt="Profile"
-            className="w-24 h-24 rounded-full border-2 border-gray-300"
-          />
-          {isEdit ? (
-            <input
-              type="text"
-              value={userData.fullname}
-              onChange={(e) =>
-                setUserData((prev) => ({ ...prev, name: e.target.value }))
-              }
-              className="mt-3 text-center border border-gray-300 rounded p-1 w-full"
-              required
+      {!showForm ? (
+        <div className="bg-white rounded-lg shadow-xl p-10 w-full max-w-md border border-gray-400">
+          <div className="flex flex-col items-center mb-6">
+            <img
+              src={userData.image || assets.profile_pic}
+              alt="Profile"
+              className="w-24 h-24 rounded-full border-2 border-gray-300"
             />
-          ) : (
             <p className="mt-3 text-lg font-semibold">
-              {!userData.fullname
-                ? "Full Name"
-                : userData.fullname
+              {userData.fullname
+                ? userData.fullname
                     .toLowerCase()
                     .split(" ")
                     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(" ")}
+                    .join(" ")
+                : "Full Name"}
             </p>
-          )}
-        </div>
-
-        <hr className="border-gray-200 mb-6" />
-
-        {/* Contact Info */}
-        <div>
-          <h2 className="text-lg font-medium mb-3">Contact Info</h2>
-          <div className="mb-4">
-            <p className="text-gray-500 text-sm">Email Id:</p>
-            <p className="text-gray-700">{userData.email ? userData.email: "Email"}</p>
           </div>
-          <div className="mb-4">
-            <p className="text-gray-500 text-sm">Phone:</p>
-            {isEdit ? (
-              <input
-                type="text"
-                value={userData.phone}
-                onChange={(e) =>
-                  setUserData((prev) => ({ ...prev, phone: e.target.value }))
-                }
-                className="border border-gray-300 rounded p-1 w-full"
-              />
-            ) : (
-              <p className="text-gray-700">{userData.phone? userData.phone : "Phone Number"}</p>
-            )}
-          </div>
-        </div>
 
-        {/* Edit Button */}
-        <button
-          onClick={() => setIsEdit(!isEdit)}
-          className="mt-6 bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-400 transition-all duration-200"
+          <hr className="border-gray-200 mb-6" />
+
+          <div>
+            <h2 className="text-lg font-medium mb-3">Contact Info</h2>
+            <div className="mb-4">
+              <p className="text-gray-500 text-sm">Email Id:</p>
+              <p className="text-gray-700">{userData.email || "Email"}</p>
+            </div>
+            <div className="mb-4">
+              <p className="text-gray-500 text-sm">Phone:</p>
+              <p className="text-gray-700">
+                {userData.phone || "Phone Number"}
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setShowForm(true)}
+            className="mt-6 bg-blue-600 text-white rounded px-4 py-2 hover:bg-blue-400 transition-all duration-200"
+          >
+            Edit Profile
+          </button>
+        </div>
+      ) : (
+        <form
+          onSubmit={submitHandler}
+          className="w-full max-w-sm mx-auto bg-white p-7 rounded-md shadow-xl border border-gray-300"
         >
-          {isEdit ? "Save Changes" : "Edit Profile"}
-        </button>
-      </div>
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 font-medium mb-2"
+              htmlFor="name"
+            >
+              Full Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+              placeholder="Enter your full name"
+              value={editedName}
+              onChange={(e) => setEditedName(e.target.value)}
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 font-medium mb-2"
+              htmlFor="phone"
+            >
+              Phone Number
+            </label>
+            <input
+              id="phone"
+              type="number"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+              placeholder="Enter your phone number"
+              value={editedNumber}
+              onChange={(e) => setEditedNumber(e.target.value)}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-2 px-4 rounded-md ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-500 text-white hover:bg-blue-600"
+            } transition duration-300`}
+          >
+            {loading ? "Saving..." : "Save Changes"}
+          </button>
+        </form>
+      )}
     </div>
   );
 };

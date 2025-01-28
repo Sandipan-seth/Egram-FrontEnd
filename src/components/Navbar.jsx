@@ -4,8 +4,6 @@ import { assets } from "../assets/assets_frontend/assets";
 import userContext from "../contexts/UserContext";
 import axios from "axios";
 
-
-
 const Navbar = () => {
   const navigate = useNavigate();
   const {
@@ -13,9 +11,8 @@ const Navbar = () => {
     setToken,
     userType,
     setUserType,
-    username,
-    setUsername,
     setUserData,
+    userData
   } = useContext(userContext);
   const [showMenu, setShowMenu] = useState(false);
 
@@ -27,22 +24,17 @@ const Navbar = () => {
         let res = await axios.post(`http://localhost:7000/api/auth/decode`, {
           token,
         });
-        console.log(res.data);
         setUserType(res.data.user.role);
-        setUsername(res.data.user.fullname);
-        // setUserData(res.data.user);
-        // console.log(hello);
+        setUserData(res.data.user);
       }
     } catch (err) {
       console.error(err);
     }
   };
 
-
-
-    useEffect(() => {
-      userVerify(localStorage.getItem("token"));
-    }, []);
+  useEffect(() => {
+    userVerify(localStorage.getItem("token"));
+  }, []);
 
   return (
     <div className="sticky z-10 top-0 left-0 flex items-center justify-between text-sm py-4 mb-5 border-b border-b-gray-400 bg-white bg-opacity-75">
@@ -57,14 +49,11 @@ const Navbar = () => {
       </div>
 
       {token ? (
-        <div className="">
+        <div className="text-center">
           Hello, &nbsp;
           <span className="text-red-500 font-bold text-lg md:text-xl ">
-            {
-              (username.charAt(0).toUpperCase() + username.slice(1)).split(
-                " "
-              )[0]
-            }
+            {(userData.fullname || "Guest").charAt(0).toUpperCase() +
+              (userData.fullname || "Guest").slice(1).split(" ")[0]}
           </span>
         </div>
       ) : null}
@@ -228,7 +217,7 @@ const Navbar = () => {
 
           <div className="w-full flex justify-center items-center">
             {userType === "user" ? null : userType === "admin" ? (
-              <button className="p-4 border border-gray-600 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300">
+              <button className="md:p-4 p-1 border border-gray-600 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300">
                 {userType.charAt(0).toUpperCase() + userType.slice(1)} Panel
               </button>
             ) : userType === "officer" ? (

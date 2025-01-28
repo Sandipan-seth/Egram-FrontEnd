@@ -1,29 +1,29 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 const MyWorks = () => {
   // Mock data for applied works
-  const [works, setWorks] = useState([
-    {
-      id: 1,
-      title: "Aadhar Update",
-      status: "Submitted", // Possible statuses: Submitted, Forwarded, Verified
-    },
-    {
-      id: 2,
-      title: "Passport Renewal",
-      status: "Forwarded",
-    },
-    {
-      id: 3,
-      title: "PAN Card Correction",
-      status: "Verified",
-    },
-    {
-      id: 4,
-      title: "PAN Card Correction",
-      status: "Submitted",
-    },
-  ]);
+  const [works, setWorks] = useState([]);
+
+  const getMyWorks = async () => {
+    try {
+      let res = await axios.post(
+        `http://localhost:7000/api/user/decodeService`,
+        {
+          token: localStorage.getItem("token"),
+        }
+      );
+      let myServices = res.data.services;
+      console.log(myServices);
+      setWorks(myServices);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getMyWorks();
+  }, []);
 
   // Handler to simulate online payment
   const handlePayOnline = (id) => {
@@ -46,7 +46,7 @@ const MyWorks = () => {
             <thead>
               <tr>
                 <th className="border border-gray-300 px-4 py-2 text-left">
-                  Work Title
+                  Service Name
                 </th>
                 <th className="border border-gray-300 px-4 py-2 text-left">
                   Status
@@ -58,15 +58,15 @@ const MyWorks = () => {
             </thead>
             <tbody>
               {works.map((work) => (
-                <tr key={work.id} className="odd:bg-gray-100 even:bg-white">
+                <tr key={work._id} className="odd:bg-gray-100 even:bg-white">
                   <td className="border border-gray-300 px-4 py-2">
-                    {work.title}
+                    {work.serviceType}{" "}{work.serviceName}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {work.status}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {work.status === "Submitted" ? (
+                    {work.status === "Applied" ? (
                       <div className="flex flex-wrap gap-2">
                         <button
                           className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"

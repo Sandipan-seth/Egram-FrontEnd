@@ -3,10 +3,10 @@ import userContext from "../contexts/UserContext";
 
 const NewApply = ({ id }) => {
   const { userData } = useContext(userContext);
-  const [name, setName] = useState(userData.name);
-  const [address1, setAddress1] = useState(userData.address.line1);
-  const [address2, setAddress2] = useState(userData.address.line2);
-  const [pinCode, setPinCode] = useState(userData.address.pincode);
+  const [name, setName] = useState(userData.fullname);
+  const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
+  const [pinCode, setPinCode] = useState("");
   const [phone, setPhone] = useState(userData.phone);
   const [age, setAge] = useState(18);
 
