@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Modification from "./Modification";
 import NewApply from "./NewApply";
@@ -8,6 +8,7 @@ function Verification() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { token } = useContext(userContext);
+
 
   const parameterConvertToWord = (w) =>
     w

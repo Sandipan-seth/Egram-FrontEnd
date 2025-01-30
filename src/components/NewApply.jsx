@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import userContext from "../contexts/UserContext";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const NewApply = ({ id }) => {
   const { userData } = useContext(userContext);
@@ -9,6 +11,38 @@ const NewApply = ({ id }) => {
   const [pinCode, setPinCode] = useState("");
   const [phone, setPhone] = useState(userData.phone);
   const [age, setAge] = useState(18);
+
+  const navigate = useNavigate();
+
+  const formSubmitHandeler = async (e) => {
+    e.preventDefault();
+    try {
+      const original = id;
+      const updated = original
+        .replace(/_/g, " ")
+        .replace(/(^\w|\s\w)/g, (match) => match.toUpperCase());
+      let res = await axios.post(
+        `http://localhost:7000/api/user/applyService`,
+        {
+          token: localStorage.getItem("token"),
+          serviceName: updated,
+          serviceType: "New",
+          name,
+          phone,
+          status: "Applied",
+          age,
+          address1,
+          address2,
+          pincode: pinCode,
+        }
+      );
+
+      alert(res.data.message);
+      navigate("/my-works");
+    } catch (e) {
+      alert(e.response.data.message);
+    }
+  };
 
   useEffect(() => {
     scrollTo(0, 0);
@@ -26,27 +60,25 @@ const NewApply = ({ id }) => {
       <form
         className="space-y-4"
         autoComplete="off"
-        onSubmit={(e) => {
-          e.preventDefault();
-          alert("Form Submitted!");
-        }}
+        onSubmit={(e) => formSubmitHandeler(e)}
       >
         <div>
           <label
             htmlFor="details"
             className="block text-gray-700 font-medium mb-1"
           >
-            Upload a Photo for{" "}
+            Upload a Passport size Photo for{" "}
             {id
               .split("_")
               .map((word) => word[0].toUpperCase() + word.slice(1))
               .join(" ")}{" "}
+            <span className="text-red-600">*</span>
           </label>
           <input
             type="file"
             name="details"
             id="details"
-            className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer file:cursor-pointer"
+            className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer file:cursor-pointer "
           />
         </div>
 
@@ -56,7 +88,7 @@ const NewApply = ({ id }) => {
             htmlFor="name"
             className="block text-gray-700 font-medium mb-1"
           >
-            Name
+            Name <span className="text-red-600">*</span>
           </label>
           <input
             type="text"
@@ -71,7 +103,7 @@ const NewApply = ({ id }) => {
 
         <div>
           <label htmlFor="age" className="block text-gray-700 font-medium mb-1">
-            Age
+            Age <span className="text-red-600">*</span>
           </label>
           <input
             type="number"
@@ -90,7 +122,7 @@ const NewApply = ({ id }) => {
             htmlFor="phone"
             className="block text-gray-700 font-medium mb-1"
           >
-            Phone
+            Phone <span className="text-red-600">*</span>
           </label>
           <input
             type="number"
@@ -109,7 +141,7 @@ const NewApply = ({ id }) => {
             htmlFor="address1"
             className="block text-gray-700 font-medium mb-1"
           >
-            Address Line 1
+            Address Line 1 <span className="text-red-600">*</span>
           </label>
           <input
             type="text"
@@ -141,7 +173,7 @@ const NewApply = ({ id }) => {
             htmlFor="Pincode"
             className="block text-gray-700 font-medium mb-1"
           >
-            Pin Code
+            Pin Code<span className="text-red-600">*</span>
           </label>
           <input
             type="text"

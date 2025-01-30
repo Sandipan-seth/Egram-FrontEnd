@@ -10,7 +10,7 @@ import MyProfile from "./pages/MyProfile";
 import MyWorks from "./pages/MyWorks";
 import AllServices from "./pages/AllServices";
 import Verification from "./components/Verification";
-import ProtectedRoutes from "./utils/ProtectedRoutes";
+import AdminPanel from "./pages/AdminPanel";
 
 const App = () => {
   return (
@@ -25,8 +25,8 @@ const App = () => {
         <Route path="/my-works" element={<MyWorks />} />
         <Route path="/all-works/:id" element={<Verification />} />
         <Route path="/login" element={<Login />} />
-        {/* <Route element={<ProtectedRoutes />}>
-        </Route> */}
+
+        <Route path="/admin-panel" element={<AdminPanel />} />
       </Routes>
 
       <Footer />

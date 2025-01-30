@@ -1,14 +1,47 @@
 import React, { useContext, useEffect, useState } from "react";
 import userContext from "../contexts/UserContext";
-
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Modification = ({ id }) => {
-  const {userData} = useContext(userContext);
+  const { userData } = useContext(userContext);
   const [name, setName] = useState(userData.fullname);
   const [phone, setPhone] = useState(userData.phone);
   const [address1, setAddress1] = useState("");
   const [address2, setAddress2] = useState("");
   const [pinCode, setPinCode] = useState("");
+
+  const navigate = useNavigate();
+
+  const formSubmitHandeler = async (e) => {
+    e.preventDefault();
+    try {
+      const original = id;
+      const updated = original
+        .replace(/_/g, " ")
+        .replace(/(^\w|\s\w)/g, (match) => match.toUpperCase());
+      let res = await axios.post(
+        `http://localhost:7000/api/user/applyService`,
+        {
+          token: localStorage.getItem("token"),
+          serviceName: updated,
+          serviceType: "Update",
+          name,
+          phone,
+          status: "Applied",
+          address1,
+          address2,
+          pincode: pinCode,
+        }
+      );
+
+      alert(res.data.message);
+      // console.log(res);
+      navigate("/my-works");
+    } catch (e) {
+      alert(e.response.data.message);
+    }
+  };
 
   useEffect(() => {
     scrollTo(0, 0);
@@ -27,8 +60,7 @@ const Modification = ({ id }) => {
         className="space-y-4"
         autoComplete="off"
         onSubmit={(e) => {
-          e.preventDefault();
-          alert("Form Submitted!");
+          formSubmitHandeler(e);
         }}
       >
         {/* File Input */}
@@ -42,7 +74,7 @@ const Modification = ({ id }) => {
               .split("_")
               .map((word) => word[0].toUpperCase() + word.slice(1))
               .join(" ")}{" "}
-            Details
+            Details <span className="text-red-600">*</span>
           </label>
           <input
             type="file"
@@ -58,7 +90,7 @@ const Modification = ({ id }) => {
             htmlFor="name"
             className="block text-gray-700 font-medium mb-1"
           >
-            Name
+            Name <span className="text-red-600">*</span>
           </label>
           <input
             type="text"
@@ -77,7 +109,7 @@ const Modification = ({ id }) => {
             htmlFor="phone"
             className="block text-gray-700 font-medium mb-1"
           >
-            Phone
+            Phone <span className="text-red-600">*</span>
           </label>
           <input
             type="number"
@@ -96,7 +128,7 @@ const Modification = ({ id }) => {
             htmlFor="address1"
             className="block text-gray-700 font-medium mb-1"
           >
-            Address Line 1
+            Address Line 1 <span className="text-red-600">*</span>
           </label>
           <input
             type="text"
@@ -128,7 +160,7 @@ const Modification = ({ id }) => {
             htmlFor="PinCode"
             className="block text-gray-700 font-medium mb-1"
           >
-            Pin Code
+            Pin Code <span className="text-red-600">*</span>
           </label>
           <input
             type="text"
