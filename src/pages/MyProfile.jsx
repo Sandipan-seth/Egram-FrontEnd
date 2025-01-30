@@ -13,6 +13,29 @@ const MyProfile = () => {
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Function to check token and redirect if missing
+  const checkToken = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+  };
+
+  useEffect(() => {
+    checkToken(); // Check token immediately
+
+    // Listen for token removal across tabs
+    const handleStorageChange = () => checkToken();
+    window.addEventListener("storage", handleStorageChange);
+
+    // Fallback: Detect token removal in the same tab
+    const interval = setInterval(checkToken, 1000);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [navigate]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -29,15 +52,6 @@ const MyProfile = () => {
       setEditedNumber(userData.phone || "");
     }
   }, [userData]);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-    userVerify(token);
-  }, []);
 
   const userVerify = async (token) => {
     try {

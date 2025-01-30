@@ -1,9 +1,34 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const MyWorks = () => {
-  // Mock data for applied works
+  const navigate = useNavigate();
   const [works, setWorks] = useState([]);
+
+  // Function to check token and redirect if missing
+  const checkToken = () => {
+    let token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+  };
+
+  useEffect(() => {
+    checkToken(); // Check initially
+
+    // Listen for token removal across tabs
+    const handleStorageChange = () => checkToken();
+    window.addEventListener("storage", handleStorageChange);
+
+    // Fallback: Detect token removal in the same tab
+    const interval = setInterval(checkToken, 1000);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [navigate]);
 
   const getMyWorks = async () => {
     try {
@@ -13,9 +38,7 @@ const MyWorks = () => {
           token: localStorage.getItem("token"),
         }
       );
-      let myServices = res.data.services;
-      // console.log(myServices);
-      setWorks(myServices);
+      setWorks(res.data.services);
     } catch (e) {
       console.log(e);
     }
@@ -25,16 +48,14 @@ const MyWorks = () => {
     getMyWorks();
   }, []);
 
-  // Handler to simulate online payment
+  // Simulate online payment
   const handlePayOnline = (id) => {
     alert(`Payment for work ID ${id} has been processed.`);
-    // Add logic for payment here
   };
 
-  // Handler to cancel submission
-  const handleCancel = async(id) => {
-    // setWorks(works.filter((work) => work.id !== id));
-    try{
+  // Cancel submission
+  const handleCancel = async (id) => {
+    try {
       let res = await axios.post(
         `http://localhost:7000/api/user/cancelService`,
         {
@@ -44,7 +65,7 @@ const MyWorks = () => {
       );
       getMyWorks();
       alert(res.data.message);
-    }catch(e){
+    } catch (e) {
       console.log(e);
     }
   };
@@ -72,7 +93,7 @@ const MyWorks = () => {
               {works.map((work) => (
                 <tr key={work._id} className="odd:bg-gray-100 even:bg-white">
                   <td className="border border-gray-300 px-4 py-2">
-                    {work.serviceType}{" "}{work.serviceName}
+                    {work.serviceType} {work.serviceName}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {work.status}
@@ -82,7 +103,7 @@ const MyWorks = () => {
                       <div className="flex flex-wrap gap-2">
                         <button
                           className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-                          onClick={() => handlePayOnline(work.id)}
+                          onClick={() => handlePayOnline(work._id)}
                         >
                           Pay Online
                         </button>
