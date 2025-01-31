@@ -12,6 +12,8 @@ import AllServices from "./pages/AllServices";
 import Verification from "./components/Verification";
 import AdminPanel from "./pages/AdminPanel";
 import ViewDetails from "./pages/ViewDetails";
+import OfficerPanel from "./pages/OfficerPanel";
+import OfficerViewDetails from "./pages/OfficerViewDetails";
 
 const App = () => {
   return (
@@ -26,9 +28,11 @@ const App = () => {
         <Route path="/my-works" element={<MyWorks />} />
         <Route path="/all-works/:id" element={<Verification />} />
         <Route path="/login" element={<Login />} />
-        <Route path='/admin-panel/:serviceId' element={<ViewDetails />} />
+        <Route path="/admin-panel/:serviceId" element={<ViewDetails />} />
+        <Route path="/officer-panel/:serviceId" element={<OfficerViewDetails />} />
 
         <Route path="/admin-panel" element={<AdminPanel />} />
+        <Route path="/officer-panel" element={<OfficerPanel />} />
       </Routes>
 
       <Footer />

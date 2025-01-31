@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
-import { assets } from "../assets/assets_frontend/assets";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import userContext from "../contexts/UserContext";
+import React, { useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import userContext from '../contexts/UserContext';
+import axios from 'axios';
+import { assets } from '../assets/assets_frontend/assets';
+
 
 function ApplicationCard({ title, userName, id }) {
   const nav = useNavigate();
@@ -22,7 +23,7 @@ function ApplicationCard({ title, userName, id }) {
       <button
         className="mt-4 border border-blue-400 hover:text-white px-4 py-2 rounded-lg w-full hover:bg-blue-500 transition-all duration-300 "
         onClick={() => {
-          nav(`/admin-panel/${id}`);
+          nav(`/officer-panel/${id}`);
         }}
       >
         View Application
@@ -31,7 +32,7 @@ function ApplicationCard({ title, userName, id }) {
   );
 }
 
-function AdminPanel() {
+function OfficerPanel() {
   const navigate = useNavigate();
   const [selectedSection, setSelectedSection] = useState("fresh");
   const { services, setServices } = useContext(userContext);
@@ -59,7 +60,7 @@ function AdminPanel() {
     const fetchData = async () => {
       try {
         let serviceDetails = await axios.post(
-          `http://localhost:7000/api/admin/getServices`
+          `http://localhost:7000/api/officer/getServices`
         );
         const { success, services } = serviceDetails.data;
         if (success) {
@@ -75,11 +76,13 @@ function AdminPanel() {
 
   // Filter services based on type & status
   const freshApplications = services.filter(
-    (item) => item.serviceType === "New" && item.status === "Applied"
+    (item) =>
+      item.serviceType === "New" && item.status === "Forwarded to Officer"
   );
 
   const modificationApplications = services.filter(
-    (item) => item.serviceType === "Update" && item.status === "Applied"
+    (item) =>
+      item.serviceType === "Update" && item.status === "Forwarded to Officer"
   );
 
   return (
@@ -161,4 +164,4 @@ function AdminPanel() {
   );
 }
 
-export default AdminPanel;
+export default OfficerPanel

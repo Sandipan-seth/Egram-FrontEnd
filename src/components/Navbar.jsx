@@ -95,15 +95,21 @@ const Navbar = () => {
       {userType === "user" || !token ? null : (
         <div className="">
           {userType === "admin" ? (
-            <button className="px-4 py-2 border border-gray-600 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300"
-            onClick={() => {
-              navigate("/admin-panel");
-            }}
+            <button
+              className="px-4 py-2 border border-gray-600 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300"
+              onClick={() => {
+                navigate("/admin-panel");
+              }}
             >
               {userType.charAt(0).toUpperCase() + userType.slice(1)} Panel
             </button>
           ) : userType === "officer" ? (
-            <button className="px-4 py-2 border border-gray-600 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300">
+            <button
+              className="px-4 py-2 border border-gray-600 rounded-md font-semibold hover:bg-gray-300 transition-all duration-300"
+              onClick={() => {
+                navigate("/officer-panel");
+              }}
+            >
               {userType.charAt(0).toUpperCase() + userType.slice(1)} Panel
             </button>
           ) : null}

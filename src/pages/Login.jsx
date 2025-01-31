@@ -12,7 +12,7 @@ const Login = () => {
   
   
 
-  const [state, setState] = useState("Sign Up");
+  const [state, setState] = useState("Log In");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");

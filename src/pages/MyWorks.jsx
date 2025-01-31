@@ -107,18 +107,19 @@ const MyWorks = () => {
                         >
                           Pay Online
                         </button>
-                        <button
-                          className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
-                          onClick={() => handleCancel(work._id)}
-                        >
-                          Cancel
-                        </button>
                       </div>
-                    ) : (
-                      <span className="text-gray-500">
-                        No actions available
-                      </span>
-                    )}
+                    ) : work.status === "Forwarded to Officer" ? (
+                      <span>No Action Needed..</span>
+                    ) : work.status === "Rejected By Admin" ||
+                      work.status === "Rejected By Officer" ||
+                      work.status === "Verified" ? (
+                      <button
+                        className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                        onClick={() => handleCancel(work._id)}
+                      >
+                        Remove
+                      </button>
+                    ) : null}
                   </td>
                 </tr>
               ))}
