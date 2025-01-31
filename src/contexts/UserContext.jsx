@@ -11,8 +11,8 @@ export const UserProvider = (props) => {
 
   const backendUrl = import.meta.env.BACKEND_URL;
   const [userData, setUserData] = useState({});
-
   const [showForm, setShowForm] = useState(false);
+  const [services, setServices] = useState([]);
 
   const values = {
     userData,
@@ -26,6 +26,8 @@ export const UserProvider = (props) => {
     setUsername,
     showForm,
     setShowForm,
+    services,
+    setServices,
   };
   return (
     <userContext.Provider value={values}>{props.children}</userContext.Provider>

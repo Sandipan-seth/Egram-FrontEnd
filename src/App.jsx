@@ -11,6 +11,7 @@ import MyWorks from "./pages/MyWorks";
 import AllServices from "./pages/AllServices";
 import Verification from "./components/Verification";
 import AdminPanel from "./pages/AdminPanel";
+import ViewDetails from "./pages/ViewDetails";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
         <Route path="/my-works" element={<MyWorks />} />
         <Route path="/all-works/:id" element={<Verification />} />
         <Route path="/login" element={<Login />} />
+        <Route path='/admin-panel/:serviceId' element={<ViewDetails />} />
 
         <Route path="/admin-panel" element={<AdminPanel />} />
       </Routes>

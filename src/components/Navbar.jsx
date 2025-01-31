@@ -34,7 +34,7 @@ const Navbar = () => {
 
   useEffect(() => {
     userVerify(localStorage.getItem("token"));
-  }, []);
+  }, [token]);
 
 
 
