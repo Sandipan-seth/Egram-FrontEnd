@@ -37,7 +37,7 @@ Ensure you have the following installed on your system:
 
 4. **Start the Backend Server**
    ```sh
-   npm start
+   npm run server
    ```
 
 5. **Install Frontend Dependencies**
@@ -48,7 +48,7 @@ Ensure you have the following installed on your system:
 
 6. **Start the Frontend Server**
    ```sh
-   npm start
+   npm run dev
    ```
 
 7. **Access the Application**
