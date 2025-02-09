@@ -55,10 +55,9 @@ Ensure you have the following installed on your system:
    - Open your browser and navigate to `http://localhost:3000` (default frontend port).
 
 ## 🛠 Technologies Used
-- **Frontend:** React.js, Redux, Tailwind CSS
+- **Frontend:** React.js, Tailwind CSS
 - **Backend:** Node.js, Express.js, MongoDB
 - **Authentication:** JWT (JSON Web Token)
-- **State Management:** Redux Toolkit
 
 ## 🤝 Contribution Guidelines
 1. 🔄 Fork the repository.
