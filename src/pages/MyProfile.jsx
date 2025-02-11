@@ -11,6 +11,8 @@ const MyProfile = () => {
   const [editedName, setEditedName] = useState("");
   const [editedNumber, setEditedNumber] = useState("");
   const [showForm, setShowForm] = useState(false);
+
+  const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Function to check token and redirect if missing
@@ -46,12 +48,15 @@ const MyProfile = () => {
     userVerify(token);
   }, []);
 
+
+
   useEffect(() => {
     if (userData) {
       setEditedName(userData.fullname || "");
       setEditedNumber(userData.phone || "");
     }
   }, [userData]);
+
 
   const userVerify = async (token) => {
     try {
@@ -63,6 +68,16 @@ const MyProfile = () => {
       console.error(err);
       navigate("/login");
     }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    console.log(file);
+    // if (file) {
+      
+    // }
+    // setSelectedImage(file);
+    // console.log(selectedImage);
   };
 
   const submitHandler = async (e) => {
@@ -79,6 +94,7 @@ const MyProfile = () => {
         name: editedName,
         phone: editedNumber,
         token: localStorage.getItem("token"),
+        image: selectedImage
       });
 
       if (res.data.success) {
@@ -145,6 +161,22 @@ const MyProfile = () => {
           onSubmit={submitHandler}
           className="w-full max-w-sm mx-auto bg-white p-7 rounded-md shadow-xl border border-gray-300"
         >
+          <div className="mb-4">
+            <label
+              className="block text-gray-700 font-medium mb-2"
+              htmlFor="image"
+            >
+              Upload Image
+            </label>
+            <input
+              id="image"
+              type="file"
+              // accept="image/*"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              onChange={handleImageChange}
+            />
+          </div>
+
           <div className="mb-4">
             <label
               className="block text-gray-700 font-medium mb-2"
