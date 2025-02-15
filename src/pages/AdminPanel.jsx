@@ -4,14 +4,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import userContext from "../contexts/UserContext";
 
-function ApplicationCard({ title, userName, id }) {
+function ApplicationCard({ title, userName, userPic, id }) {
   const nav = useNavigate();
   return (
     <div className="border border-gray-300 p-6 rounded-lg shadow-lg bg-white w-full max-w-sm">
       <h1 className="text-xl font-semibold text-gray-800 mb-3">{title}</h1>
       <div className="flex items-center gap-3 p-3 border rounded-lg bg-gray-100">
         <img
-          src={assets.profile_pic}
+          src={userPic ? userPic : assets.profile_pic}
           alt="User"
           className="w-12 h-12 rounded-full border"
         />
@@ -34,7 +34,16 @@ function ApplicationCard({ title, userName, id }) {
 function AdminPanel() {
   const navigate = useNavigate();
   const [selectedSection, setSelectedSection] = useState("fresh");
+  const [userImg, setUserImg] = useState("");
   const { services, setServices } = useContext(userContext);
+
+
+  const getUser = async (user) =>{
+    const userDetail = await axios.post(
+      `http://localhost:7000/api/admin/fetchUserById/${user}`
+    );
+    setUserImg(userDetail.data.user.image);
+  }
 
   useEffect(() => {
     const checkToken = () => {
@@ -62,6 +71,7 @@ function AdminPanel() {
           `http://localhost:7000/api/admin/getServices`
         );
         const { success, services } = serviceDetails.data;
+
         if (success) {
           setServices(services);
         }
@@ -120,14 +130,21 @@ function AdminPanel() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
             {freshApplications.length > 0 ? (
-              freshApplications.map((item) => (
-                <ApplicationCard
-                  key={item._id}
-                  title={item.serviceName}
-                  userName={item.name}
-                  id={item._id}
-                />
-              ))
+              freshApplications.map((item) => {
+
+
+                getUser(item.user);
+
+                return (
+                  <ApplicationCard
+                    key={item._id}
+                    title={item.serviceName}
+                    userName={item.name}
+                    userPic={userImg}
+                    id={item._id}
+                  />
+                );
+              })
             ) : (
               <p className="text-gray-500">No applications right now...</p>
             )}
@@ -143,14 +160,20 @@ function AdminPanel() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
             {modificationApplications.length > 0 ? (
-              modificationApplications.map((item) => (
-                <ApplicationCard
-                  key={item._id}
-                  title={item.serviceName}
-                  userName={item.name}
-                  id={item._id}
-                />
-              ))
+              modificationApplications.map((item) => {
+                
+                getUser(item.user);
+                
+                return (
+                  <ApplicationCard
+                    key={item._id}
+                    title={item.serviceName}
+                    userName={item.name}
+                    userPic={userImg}
+                    id={item._id}
+                  />
+                );
+              })
             ) : (
               <p className="text-gray-500">No applications right now...</p>
             )}
