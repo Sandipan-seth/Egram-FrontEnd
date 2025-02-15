@@ -64,7 +64,7 @@ Ensure you have the following installed on your system:
 1. 🔄 Fork the repository.
 2. 🌱 Create a new branch (`feature/your-feature-name`).
 3. 📝 Commit your changes and push to the new branch.
-4. 🔍 Open a Pull Request for review..
+4. 🔍 Open a Pull Request for review.
 
 ## 📜 License
 This project is licensed under [MIT License](LICENSE).

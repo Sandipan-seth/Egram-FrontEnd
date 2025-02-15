@@ -12,7 +12,7 @@ const MyProfile = () => {
   const [editedNumber, setEditedNumber] = useState("");
   const [showForm, setShowForm] = useState(false);
 
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState("");
   const [loading, setLoading] = useState(false);
 
   // Function to check token and redirect if missing
@@ -48,15 +48,12 @@ const MyProfile = () => {
     userVerify(token);
   }, []);
 
-
-
   useEffect(() => {
     if (userData) {
       setEditedName(userData.fullname || "");
       setEditedNumber(userData.phone || "");
     }
   }, [userData]);
-
 
   const userVerify = async (token) => {
     try {
@@ -70,15 +67,6 @@ const MyProfile = () => {
     }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    console.log(file);
-    // if (file) {
-      
-    // }
-    // setSelectedImage(file);
-    // console.log(selectedImage);
-  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -88,14 +76,27 @@ const MyProfile = () => {
       return;
     }
 
+    const formData = new FormData();
+    formData.append("name", editedName);
+    formData.append("phone", editedNumber);
+    formData.append("token", localStorage.getItem("token"));
+
+    if (selectedImage) {
+      formData.append("image", selectedImage);
+    }
+
     setLoading(true);
+    // console.log("Form data:", selectedImage);
+
     try {
-      let res = await axios.post(`http://localhost:7000/api/user/updateUser`, {
-        name: editedName,
-        phone: editedNumber,
-        token: localStorage.getItem("token"),
-        image: selectedImage
-      });
+      let res = await axios.post(
+        "http://localhost:7000/api/user/updateUser",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
 
       if (res.data.success) {
         setShowForm(false);
@@ -111,6 +112,7 @@ const MyProfile = () => {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="p-6 min-h-screen flex justify-center items-center">
@@ -173,7 +175,9 @@ const MyProfile = () => {
               type="file"
               // accept="image/*"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
-              onChange={handleImageChange}
+              onChange={(e) => {
+                setSelectedImage(e.target.files[0]);
+              }}
             />
           </div>
 
